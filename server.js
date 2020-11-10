@@ -20,8 +20,14 @@ app.get('/', (req, res) => res.send({ message: 'Server running succesfully'}));
 app.use(auth);
 // secret code for members who are authenticated
 app.get('/secret', (req, res) => {
-    res.statusCode = 200;
-    res.end("******")
+    res.statusCode = 201;
+    res.send({username: 'Isaac', password: 'qwerty12345'});
 });
+
+app.post('/login', (req, res) => {
+    res.statusCode = 201;
+    res.send({username: 'Isaac', password: 'qwerty12345'});
+});
+
 
 server.listen(port,() => console.log(`Server is running on port ${port}`));
