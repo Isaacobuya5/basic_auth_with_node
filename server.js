@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const morgan = require('morgan');
+const bodyParser = require("body-parser");
 
 require('dotenv').config();
 
@@ -16,6 +17,20 @@ const server = http.createServer(app);
 
 app.get('/', (req, res) => res.send({ message: 'Server running succesfully'}));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.post('/register', (req, res) => {
+    if (!req.body) {
+        res.satusCode = 401;
+        throw new Error("No data supplied")
+    }
+    res.statusCode = 201;
+    res.send({...req.body})
+})
+
 // attach the middleware to any request before accessing the routes
 app.use(auth);
 // secret code for members who are authenticated
@@ -25,9 +40,11 @@ app.get('/secret', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+
     res.statusCode = 201;
     res.send({username: 'Isaac', password: 'qwerty12345'});
 });
+
 
 
 server.listen(port,() => console.log(`Server is running on port ${port}`));
