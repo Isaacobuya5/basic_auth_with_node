@@ -1,4 +1,6 @@
-function auth (req, res, next) {
+const User = require("../model/User");
+
+async function auth (req, res, next) {
     // get the Authorization header
     let authHeader = req.headers.authorization;
 
@@ -18,8 +20,11 @@ function auth (req, res, next) {
    let username = auth[0];
    let password = auth[1];
 
+
    // database checking logic
-   if(username == 'Isaac', password == 'qwerty12345') {
+   const user = await User.findByCredentials(username, password);
+   if(user) {
+       req.user = user;
        next();
    } else {
        let err = new Error('You are not authenticated');
