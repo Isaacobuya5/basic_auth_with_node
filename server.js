@@ -2,6 +2,9 @@ const http = require('http');
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const connectStore = require("connect-mongo");
+const mongoose = require("mongoose");
 
 require('dotenv').config();
 
@@ -23,6 +26,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+const MongoStore = connectStore(session);
+app.use(session({
+    name: process.env.SESSION_NAME,
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: false,
+    resave: false,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection,
+        collection: 'session',
+        ttl: parseInt(process.env.SESSION_DURATION) / 1000
+    }),
+    cookie: {
+        sameSite: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: parseInt(process.env.SESSION_DURATION)
+    }
+}))
 
 app.use("/api", User);
 

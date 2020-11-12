@@ -1,6 +1,7 @@
 const User = require("../model/User");
 
 async function auth (req, res, next) {
+    if (!req.session.user) {
     // get the Authorization header
     let authHeader = req.headers.authorization;
 
@@ -25,14 +26,31 @@ async function auth (req, res, next) {
    const user = await User.findByCredentials(username, password);
    if(user) {
        req.user = user;
+       req.session.user = {user_id: user._id, username};
        next();
-   } else {
-       let err = new Error('You are not authenticated');
 
-       res.setHeader('WWW-Authenticate', 'Basic');
-       err.status = 401
-       next(err);
+    } else {
+        let err = new Error('You are not authenticated');
+ 
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401
+        next(err);
+    }
+    }
+   else {
+   if(req.session && req.session.user) {
+       // check if user with given id exists
+        next();
+
+   } else {
+    let err = new Error('You are not authenticated');
+ 
+    res.setHeader('WWW-Authenticate', 'Basic');
+    err.status = 401
+    next(err);
    }
 }
+}
+
 
 module.exports = auth;

@@ -19,9 +19,14 @@ const loginUser =  (req, res) => {
     if (!req.user) {
         throw new Error("An error just occured");
     }
+
+    if (req.session && req.session.user) {
+        console.log(req.session.user);
+    }
     res.status(200).send(req.user);
 } catch (error) {
     res.status(500).send(error);
+    console.log(error);
 }
 }
 
