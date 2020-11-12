@@ -40,7 +40,6 @@ app.use(session({
     }),
     cookie: {
         sameSite: true,
-        secure: process.env.NODE_ENV === 'production',
         maxAge: parseInt(process.env.SESSION_DURATION)
     }
 }))
