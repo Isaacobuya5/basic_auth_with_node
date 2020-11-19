@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { totp } = require("otplib");
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
