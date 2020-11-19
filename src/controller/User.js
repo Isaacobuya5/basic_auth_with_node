@@ -1,12 +1,18 @@
 const User = require("../model/User");
+const { sendMailOtp } = require("../utils/helper");
 
 const registerUser = async (req, res) => {
   // const user = new User(req.body);
-  const { firstName, lastName, username, dob, password } = req.body;
-  const user = new User({ firstName, lastName, username, dob, password });
+  const { username, password } = req.newUser;
+  const { email } = req.body;
+  const user = new User({ email, username, password });
   try {
-    const newUser = await user.save();
-    res.status(201).send({ newUser });
+    const { _id,username, email, account_status } = await user.save();
+
+    // send verfication code to email
+      // send email to the new user
+      sendMailOtp(email);
+    res.status(201).send({ id: _id, email, account_status });
   } catch (error) {
     res.status(400).send(error);
     console.log(error);

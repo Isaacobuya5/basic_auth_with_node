@@ -3,30 +3,33 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     firstName: {
-        required: true,
         trim: true,
         type: String
     },
     lastName: {
-        required: true,
         trim: true,
         type: String
     },
     username: {
-        required: true,
+        trim: true,
+        type: String
+    },
+    email: {
         trim: true,
         unique: true,
         type: String
     },
     dob: {
-        required: true,
         trim: true,
         type: String
     },
     password: {
-        required: true,
         trim: true,
         type: String
+    },
+    account_status: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -46,7 +49,7 @@ userSchema.statics.findByCredentials = async (username, password) => {
     const user = await User.findOne({ username });
     // if email does not exist means invalid user
     if (!user) {
-      throw new Error({ error: "Invalid login credentials" });
+        return null;
     }
     // checking password agains encrypted password
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -54,6 +57,7 @@ userSchema.statics.findByCredentials = async (username, password) => {
       throw new Error({ error: "Invalid login credentials" });
     }
     // return user if valid
+    console.log(user);
     return user;
   };
 
